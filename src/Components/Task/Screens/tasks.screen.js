@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -30,19 +30,23 @@ const categories = [
 
 export const TasksScreen = ({ navigation }) => {
   const [expandedIndex, setExpandedIndex] = useState(null);
-  const [animatedHeights, setAnimatedHeights] = useState(
-    categories.map(() => new Animated.Value(80)) // Default height
-  );
+  const animatedHeights = useRef(
+    categories.map(() => new Animated.Value(80))
+  ).current; // Ref to store heights
 
   const toggleExpand = (index) => {
     const isExpanded = expandedIndex === index;
-    setExpandedIndex(isExpanded ? null : index);
 
-    Animated.timing(animatedHeights[index], {
-      toValue: isExpanded ? 80 : 180, // Expand smoothly
-      duration: 300,
-      useNativeDriver: false, // ✅ Fix: Height animation must use JS driver
-    }).start();
+    // Collapse all items
+    animatedHeights.forEach((animValue, i) => {
+      Animated.timing(animValue, {
+        toValue: i === index && !isExpanded ? 180 : 80, // Expand only the clicked item
+        duration: 300,
+        useNativeDriver: false,
+      }).start();
+    });
+
+    setExpandedIndex(isExpanded ? null : index);
   };
 
   return (
@@ -69,7 +73,7 @@ export const TasksScreen = ({ navigation }) => {
                 styles.card,
                 {
                   backgroundColor: category.color,
-                  maxHeight: animatedHeights[index],
+                  height: animatedHeights[index],
                 },
               ]}
             >
