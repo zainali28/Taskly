@@ -40,7 +40,7 @@ Watch the app in action: [Demo Video](your-video-link-here)
    ```  
 3. Start the app:  
    ```bash  
-   expo start  
+   npm run start  
    ```  
 
 ## 🔥 Future Improvements  
